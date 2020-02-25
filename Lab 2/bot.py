@@ -14,6 +14,7 @@ class Bot:
 				- Который час?
 				- Сколько времени?
 				- Какой год?
+				- Погода
 			команды с параметрами:
 				- Умножь 12 на 157
 				- Сложи 14 и 13
@@ -75,13 +76,13 @@ class Bot:
 		try:
 			headers = {'X-Yandex-API-Key': api_key}
 			res = requests.get("https://api.weather.yandex.ru/v1/forecast?lat={}&lon={}".format(lat, lon), headers=headers)
-			print(res.status_code)
+			# print(res.status_code)
 			data = res.json()
-			stroka = find_out_condition(str(data["fact"]['condition']))
+			stroka = self.find_out_condition(str(data["fact"]['condition']))
 			answer = "Температура (°C): " + str(data["fact"]["temp"]) + \
 					 "\nОщущается как: " + str(data["fact"]['feels_like']) + \
-					 "\n" + stroka# + \
-					# "\nВетер: " + str(data["fact"]['wind_speed'])
+					 "\n" + stroka + \
+					 "\nВетер: " + str(data["fact"]['wind_speed']) + " м/c"
 			return answer
 		except Exception as e:
 			return "Что-то пошло не так." + e
@@ -106,13 +107,19 @@ class Bot:
 		""" ЗАполнить запись"""
 		self._rec[key] = data
 
+	def set_name_of_user(self, name):
+		""" задает имя пользователя и ищет подходящий файл с историей сообщений"""
+		if isinstance(name, str):
+			self._userName = name
+			self.read_from_json()
+
 	def __init__(self, user_name="user"):
-		""" Конструктор для инициализации имени пользователя"""
+		""" Конструктор для инициализации имени пользователя и истории сообщений"""
 		self._userName = user_name  # Имя пользователя
 		self._rec = {}
 		self.read_from_json()  # инициализируется свойство _rec для хранения истории переписки в виде словаря
 
-	def reply(self, s):
+	def reply(self, s) -> str:
 		""" Метод "ответа бота". Вернет строку с ответом. """
 		if isinstance(s, str):
 			answer = 0  # для ответа на арифметические вопросы
@@ -180,6 +187,11 @@ class Bot:
 			match = re.search(r'(?:что есть смысл жизни|в чем смысл|в чем смысл жизни)', s)
 			if match:
 				message = "42"
+
+			# шаблонное выражение для запроса погоды
+			match = re.search(r'(?:к\w{,1}к\w{,1}я){,1}\s{,10}(?:с\w{,1}йч\w{,1}с){,1}\s{,10}(?:п\w{,1}года)', s)
+			if match:
+				message = self.find_out_weather()
 
 			self.fill_dict(now.strftime("%d.%m.%Y %H:%M:%S"), [s, message])
 			return message
