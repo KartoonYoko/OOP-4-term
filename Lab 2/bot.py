@@ -26,46 +26,26 @@ class Bot:
 		Получение актуальной информации из интернета.
 	"""
 
-	def find_out_condition(self, condition):
+	@staticmethod
+	def find_out_condition(condition):
 		""" Перевести описание погоды для метода find_out_weather"""
-		if condition == "clear":
-			return "ясно"
-		elif condition == "partly-cloudy":
-			return "малооблачно"
-		elif condition == "cloudy":
-			return "облачно с прояснениями"
-		elif condition == "overcast":
-			return "пасмурно"
-		elif condition == "partly-cloudy-and-light-rain":
-			return "небольшой дождь"
-		elif condition == "partly-cloudy-and-rain":
-			return "дождь"
-		elif condition == "overcast-and-rain":
-			return "сильный дождь"
-		elif condition == "overcast-thunderstorms-with-rain":
-			return "сильный дождь, гроза"
-		elif condition == "cloudy-and-light-rain":
-			return "небольшой дождь"
-		elif condition == "overcast-and-light-rain":
-			return "небольшой дождь"
-		elif condition == "cloudy-and-rain":
-			return "дождь"
-		elif condition == "overcast-and-wet-snow":
-			return "дождь со снегом"
-		elif condition == "partly-cloudy-and-light-snow":
-			return "небольшой снег"
-		elif condition == "partly-cloudy-and-snow":
-			return "снег"
-		elif condition == "overcast-and-snow":
-			return "снегопад"
-		elif condition == "cloudy-and-light-snow":
-			return "небольшой снег"
-		elif condition == "overcast-and-light-snow":
-			return "небольшой снег"
-		elif condition == "cloudy-and-snow":
-			return "снег"
-		else:
-			return "Непонятные условия погоды"
+		d = {"clear": "ясно", "partly-cloudy": "малооблачно", "cloudy": "облачно с прояснениями",
+			"overcast": "пасмурно", "partly-cloudy-and-light-rain": "небольшой дождь", "partly-cloudy-and-rain": "дождь",
+			"overcast-and-rain": "сильный дождь",  "overcast-thunderstorms-with-rain":
+			"сильный дождь, гроза", "cloudy-and-light-rain":
+			"небольшой дождь", "overcast-and-light-rain":
+			"небольшой дождь","cloudy-and-rain":
+			"дождь", "overcast-and-wet-snow":
+			"дождь со снегом","partly-cloudy-and-light-snow":
+			"небольшой снег","partly-cloudy-and-snow":
+			"снег","overcast-and-snow":
+			"снегопад","cloudy-and-light-snow":"небольшой снег",
+			"overcast-and-light-snow": "небольшой снег","cloudy-and-snow": "снег"
+			}
+		for key in d.keys():
+			if condition == key:
+				return d[key]
+		return "Непонятные условия погоды."
 
 	def find_out_weather(self):
 		""" Запрос погоды через Yandex API"""
@@ -119,13 +99,73 @@ class Bot:
 		self._rec = {}
 		self.read_from_json()  # инициализируется свойство _rec для хранения истории переписки в виде словаря
 
+	# @staticmethod
+	# def mult(sr1="", sr2=""):
+	# 	answer = 0
+	# 	s1 = float(sr1)
+	# 	s2 = float(sr2)
+	# 	try:
+	# 		answer = s1 * s2
+	# 	except:
+	# 		return "Неверный формат"
+	# 	return str(answer)
+	#
+	# @staticmethod
+	# def div(sr1="", sr2=""):
+	# 	answer = 0
+	# 	s1 = float(sr1)
+	# 	s2 = float(sr2)
+	# 	try:
+	# 		answer = s1 / s2
+	# 	except:
+	# 		return "Неверный формат"
+	# 	return str(answer)
+	#
+	# @staticmethod
+	# def plus(sr1="", sr2=""):
+	# 	answer = 0
+	# 	s1 = float(sr1)
+	# 	s2 = float(sr2)
+	# 	try:
+	# 		answer = s1 + s2
+	# 	except:
+	# 		return "Неверный формат"
+	# 	return  str(answer)
+	#
+	# @staticmethod
+	# def minus(sr1="", sr2=""):
+	# 	answer = 0
+	# 	s1 = float(sr1)
+	# 	s2 = float(sr2)
+	# 	try:
+	# 		answer = s2 - s1
+	# 	except:
+	# 		return "Неверный формат"
+	# 	return str(answer)
+
 	def reply(self, s) -> str:
 		""" Метод "ответа бота". Вернет строку с ответом. """
 		if isinstance(s, str):
+			# d = {"(?:пр\w{,1}в\w{,1}т\w{,1}\s{,10}б\w{,2}т)": "Привет, " + self._userName + "!",
+			# 	'(?:ск\w{,1}л\w{,1}к\w{,1}\s{,10}вр\w{,1}м\w{,3}|к\w{,1}т\w{,1}рый\s{,10}ч\w{,1}с)': "Сейчас "+now.strftime("%H:%M"),
+			# 	'(?:к\w{,1}к\w{,1}й(?:\s{,10}|\s{,10}сейчас\s{,10})г\w{,1}д)|(?:к\w{,1}к\w{,1}ое\s{,10}ч\w{,1}сл\w{,1})': now.strftime("%d.%m.%Y"),
+			# 	'(?:по|у)множ\w+\s{,10}(\d{1,10})\s{,10}(?:на|н\w{,1}|\w{,1}а|и)\s{,10}(\d{1,10})': self.mult(),
+			# 	'(?:сложи|прибавь)\s{,10}(\d{1,10})\s{,10}(?:и|к)\s{,10}(\d{1,10})': self.plus,
+			# 	'(?:вычти)\s{,10}(\d{1,10})\s{,10}(?:из)\s{,10}(\d{1,10})': self.minus(),
+			# 	 '(?:раздели)\s{,10}(\d{1,10})\s{,10}(?:на)\s{,10}(\d{1,10})': self.div(),
+			# 	'(?:что есть смысл жизни|в чем смысл|в чем смысл жизни)': "42",
+			# 	'(?:к\w{,1}к\w{,1}я){,1}\s{,10}(?:с\w{,1}йч\w{,1}с){,1}\s{,10}(?:п\w{,1}года)': self.find_out_weather()
+			# 	 }
+
 			answer = 0  # для ответа на арифметические вопросы
 			now = datetime.datetime.now()  # текущее время
 			s = s.lower()
 			message = "Я Вас не понял, не могли бы Вы повторить?"
+
+			# for key in d.keys():
+			# 	match = re.search(key, s)
+			# 	if match:
+			# 		message = d[key]
 
 			# Приветствие в ответ на "Привет бот"
 			match = re.search(r'(?:пр\w{,1}в\w{,1}т\w{,1}\s{,10}б\w{,2}т)', s)

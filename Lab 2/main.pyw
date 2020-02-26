@@ -1,7 +1,7 @@
 from bot import Bot
 import sys
 import os
-from PyQt5 import QtWidgets
+from PyQt5 import QtWidgets, QtCore
 import form_main
 import form_authorization
 
@@ -24,8 +24,11 @@ class Main(QtWidgets.QMainWindow, form_main.Ui_Form_main):
     def get_message(self):
         s = self.lineEdit_message.text()
         self.lineEdit_message.setText("")
-        self.plainTextEdit.appendPlainText("Вы: " + s)
-        self.plainTextEdit.appendPlainText("Бот: " + self._bot.reply(s))
+        # .insertHtml("<div><font color=\"red\">tra-ta-ta</font></div>");
+        # self.textEdit.append("Вы: " + s)
+        self.textEdit.insertHtml("<div><font color=\"MediumVioletRed\">Вы: " + s + "<br></font></div>");
+        # self.textEdit.append("Бот: " + self._bot.reply(s))
+        self.textEdit.insertHtml("<div><font color=\"DarkBlue\">Бот: " + self._bot.reply(s) + "<br></font></div>");
 
     def get_name_of_user(self, name):
         """ метод задает имя пользователя и воссоздает разговор по истории(если она есть)"""
@@ -35,8 +38,11 @@ class Main(QtWidgets.QMainWindow, form_main.Ui_Form_main):
             rec = self._bot.get_history_of_chatting()
             if rec != {}:
                 for key in rec.keys():
-                    self.plainTextEdit.appendPlainText("Вы: " + rec[key][0])
-                    self.plainTextEdit.appendPlainText("Бот: " + rec[key][1])
+                    # self.textEdit.append("Вы: " + rec[key][0])
+                    # self.textEdit.append("Бот: " + rec[key][1])
+                    self.textEdit.insertHtml("<div><font color=\"MediumVioletRed\">Вы: " + rec[key][0] + "<br></font></div>");
+                    self.textEdit.insertHtml(
+                        "<div><font color=\"DarkBlue\">Бот: " + rec[key][1] + "<br></font></div>");
 
 
 class StartWindow(QtWidgets.QMainWindow, form_authorization.Ui_Form_authorization):
